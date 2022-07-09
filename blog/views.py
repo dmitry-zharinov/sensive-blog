@@ -7,7 +7,7 @@ def get_likes_count(post):
 
 
 def get_related_posts_count(tag):
-    return tag.posts.count()
+    return tag.posts__count
 
 
 def serialize_post(post):
@@ -38,9 +38,8 @@ def index(request):
     fresh_posts = Post.objects.order_by('published_at')
     most_fresh_posts = list(fresh_posts)[-5:]
 
-    tags = Tag.objects.all()
-    popular_tags = sorted(tags, key=get_related_posts_count)
-    most_popular_tags = popular_tags[-5:]
+    popular_tags = Tag.objects.all().annotate(Count('posts')).order_by('-posts__count')
+    most_popular_tags = list(popular_tags)[:5]
 
     context = {
         'most_popular_posts': [
