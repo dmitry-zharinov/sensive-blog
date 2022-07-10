@@ -1,6 +1,7 @@
-from django.shortcuts import render
-from blog.models import Comment, Post, Tag
 from django.db.models import Count
+from django.shortcuts import render
+
+from blog.models import Comment, Post, Tag
 
 
 def get_related_posts_count(tag):
@@ -70,12 +71,7 @@ def index(request):
 
     most_fresh_posts = list(fresh_posts)[-5:]
 
-    popular_tags = (
-        Tag.objects
-        .all()
-        .annotate(Count("posts"))
-        .order_by("-posts__count"))
-    most_popular_tags = list(popular_tags)[:5]
+    most_popular_tags = list(Tag.objects.popular())[:5]
 
     context = {
         "most_popular_posts": [
@@ -114,12 +110,7 @@ def post_detail(request, slug):
         'tags': [serialize_tag(tag) for tag in related_tags],
     }
 
-    popular_tags = (
-        Tag.objects
-        .all()
-        .annotate(Count("posts"))
-        .order_by("-posts__count"))
-    most_popular_tags = list(popular_tags)[:5]
+    most_popular_tags = list(Tag.objects.popular())[:5]
 
     popular_posts = (
         Post.objects
@@ -141,12 +132,7 @@ def post_detail(request, slug):
 def tag_filter(request, tag_title):
     tag = Tag.objects.get(title=tag_title)
 
-    popular_tags = (
-        Tag.objects
-        .all()
-        .annotate(Count("posts"))
-        .order_by("-posts__count"))
-    most_popular_tags = list(popular_tags)[:5]
+    most_popular_tags = list(Tag.objects.popular())[:5]
 
     popular_posts = (
         Post.objects
