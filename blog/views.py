@@ -1,4 +1,3 @@
-from django.db.models import Count
 from django.shortcuts import render
 from blog.models import Comment, Post, Tag
 
@@ -46,14 +45,14 @@ def index(request):
     most_popular_posts = (
         Post.objects
         .popular()
-        .prefetch_related("author")[:5]
+        .prefetch_related("author", "tags")[:5]
         .fetch_with_comments_count()
     )
 
     most_fresh_posts = (
         Post.objects
         .order_by("-published_at")
-        .prefetch_related("author")[:5]
+        .prefetch_related("author", "tags")[:5]
         .fetch_with_comments_count()
     )
 
@@ -101,7 +100,7 @@ def post_detail(request, slug):
     most_popular_posts = (
         Post.objects
         .popular()
-        .prefetch_related("author")[:5]
+        .prefetch_related("author", "tags")[:5]
         .fetch_with_comments_count()
     )
 
@@ -123,7 +122,7 @@ def tag_filter(request, tag_title):
     most_popular_posts = (
         Post.objects
         .popular()
-        .prefetch_related("author")[:5]
+        .prefetch_related("author", "tags")[:5]
         .fetch_with_comments_count()
     )
 
