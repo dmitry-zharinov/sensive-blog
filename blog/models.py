@@ -25,6 +25,10 @@ class PostQuerySet(models.QuerySet):
             post.comments_count = count_for_id[post.id]
         return list(self)
 
+    def fetch_tags(self):
+        tags = Tag.objects.annotate(posts_count=models.Count('posts'))
+        return self.prefetch_related(models.Prefetch('tags', queryset=tags))
+
 
 class Post(models.Model):
     title = models.CharField('Заголовок', max_length=200)
@@ -63,7 +67,7 @@ class Post(models.Model):
 
 class TagQuerySet(models.QuerySet):
     def post_count(self):
-        return self.all().annotate(posts_count=Count("posts"))
+        return self.annotate(posts_count=Count("posts"))
 
     def popular(self):
         return self.post_count().order_by("-posts_count")
