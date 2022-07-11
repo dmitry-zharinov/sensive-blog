@@ -78,7 +78,9 @@ def post_detail(request, slug):
         'image_url': post.image.url if post.image else None,
         'published_at': post.published_at,
         'slug': post.slug,
-        'tags': [serialize_tag(tag) for tag in post.tags.post_count()],
+        'tags': [
+            serialize_tag(tag)
+            for tag in post.tags.fetch_with_post_count()],
     }
 
     most_popular_tags = Tag.objects.popular()[:5]
