@@ -6,10 +6,10 @@ from django.urls import reverse
 
 class PostQuerySet(models.QuerySet):
     def popular(self):
-        return (
-            self.all()
-            .annotate(likes_count=Count("likes"))
-            .order_by("-likes_count"))
+        return self.fetch_with_likes_count().order_by("-likes_count")
+
+    def fetch_with_likes_count(self):
+        return self.all().annotate(likes_count=Count("likes"))
 
     def fetch_with_comments_count(self):
         # Оптимизация двух annotate
